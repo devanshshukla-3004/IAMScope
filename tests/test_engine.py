@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from iamscope import __version__
 from iamscope.engine import analyze_policy, diff_policies
 
 ROOT = Path(__file__).parents[1]
@@ -10,6 +11,10 @@ ROOT = Path(__file__).parents[1]
 
 def load_fixture(name):
     return (ROOT / "examples" / "policies" / name).read_text(encoding="utf-8")
+
+
+def test_analysis_reports_current_package_version():
+    assert analyze_policy({"Statement": []})["version"] == __version__
 
 
 def test_detects_wildcards_and_sensitive_actions():
@@ -88,6 +93,18 @@ def test_correlates_passrole_and_lambda_creation_across_statements():
     assert finding["evidence"]["supporting_statements"] == [0, 1]
 
 
+def test_detects_passrole_with_ec2_instance_launch():
+    result = analyze_policy({"Statement": [{"Effect": "Allow", "Action": [
+        "iam:PassRole", "ec2:RunInstances"
+    ], "Resource": "*"}]})
+    assert any(path["pattern_id"] == "PASSROLE_COMPUTE" for path in result["attack_paths"])
+
+
+def test_detects_role_policy_mutation_candidate():
+    result = analyze_policy({"Statement": [{"Effect": "Allow", "Action": "iam:PutRolePolicy", "Resource": "*"}]})
+    assert any(path["pattern_id"] == "ROLE_POLICY_MUTATION" for path in result["attack_paths"])
+
+
 def test_policy_version_path_is_detected_but_not_claimed_exploitable():
     result = analyze_policy({"Statement": [{"Effect": "Allow", "Action": [
         "iam:CreatePolicyVersion", "iam:SetDefaultPolicyVersion"
@@ -98,6 +115,14 @@ def test_policy_version_path_is_detected_but_not_claimed_exploitable():
 
 def test_wildcards_are_not_expanded_into_guessed_attack_paths():
     result = analyze_policy({"Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]})
+    assert result["attack_paths"] == []
+
+
+def test_deny_actions_do_not_complete_an_allow_attack_path():
+    result = analyze_policy({"Statement": [
+        {"Effect": "Allow", "Action": "iam:PassRole", "Resource": "*"},
+        {"Effect": "Deny", "Action": "lambda:CreateFunction", "Resource": "*"},
+    ]})
     assert result["attack_paths"] == []
 
 

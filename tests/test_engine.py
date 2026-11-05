@@ -61,3 +61,14 @@ def test_diff_is_order_independent_for_statement_fields():
 def test_non_object_document_is_rejected():
     with pytest.raises(ValueError, match="JSON object"):
         analyze_policy(json.dumps([{"Effect": "Allow"}]))
+
+
+def test_flags_allow_with_not_action():
+    result = analyze_policy({"Statement": [{"Effect": "Allow", "NotAction": ["iam:DeleteUser"], "Resource": "*"}]})
+    assert any(item["rule_id"] == "IAM007" for item in result["findings"])
+
+
+def test_notes_trust_conditions_without_claiming_they_are_safe():
+    result = analyze_policy({"Statement": [{"Effect": "Allow", "Principal": "*", "Action": "sts:AssumeRole", "Condition": {"StringEquals": {"sts:ExternalId": "example"}}}]})
+    assert any(item["rule_id"] == "IAM005" for item in result["findings"])
+    assert any(item["rule_id"] == "IAM008" for item in result["findings"])

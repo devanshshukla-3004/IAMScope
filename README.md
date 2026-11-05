@@ -13,7 +13,7 @@ IAMScope is an offline-first static analyzer for AWS IAM policy documents. It hi
 - Local CLI, FastAPI service, and browser dashboard.
 - Sample policies, automated tests, and GitHub Actions CI.
 
-> Candidate attack paths are permission-combination signals, not proof of exploitability. IAMScope does not resolve resource compatibility, conditions, trust relationships, permissions boundaries, SCPs, or runtime prerequisites. Review findings in context.
+> Candidate attack paths are permission-combination signals, not proof of exploitability. The current correlation is syntactic and does not prove resource or condition compatibility. Review findings in context.
 
 ## Quick start (Windows PowerShell)
 
@@ -44,7 +44,7 @@ py -m pytest
 
 ## API
 
-- `GET /api/health` — service health.
+- `GET /api/health` — service health and runtime version.
 - `POST /api/analyze` — JSON body: `{"policy": { ... }, "policy_name": "example"}`; response includes findings and an `attack_paths` array.
 - `POST /api/diff` — JSON body: `{"before": { ... }, "after": { ... }}`.
 - `GET /docs` — interactive OpenAPI documentation.
@@ -61,7 +61,7 @@ py -m pytest
 
 ## Safety and limitations
 
-IAMScope reads only the JSON documents supplied to it. It does not authenticate to AWS, enumerate accounts, assume roles, mutate IAM, or execute cloud actions. The ruleset is heuristic: it does not calculate complete effective permissions, resolve policy variables, evaluate every condition operator, model service control policies, permission boundaries, session policies, resource-based policies, or service-specific authorization behavior. Candidate attack paths may be false positives or miss paths requiring wildcard expansion or contextual evaluation. Review every finding before making access decisions.
+IAMScope reads only the JSON documents supplied to it. It does not authenticate to AWS, enumerate accounts, assume roles, mutate IAM, or execute cloud actions. The ruleset is heuristic: it does not calculate complete effective permissions, resolve policy variables, evaluate every condition operator, model service control policies, permission boundaries, session policies, resource-based policies, or service-specific authorization behavior. Candidate attack paths are syntactic permission-combination indicators; resource compatibility and condition semantics are not established. Findings may be false positives or may miss paths requiring wildcard expansion or contextual evaluation. Review every finding before making access decisions.
 
 ## Project structure
 

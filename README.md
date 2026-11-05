@@ -80,9 +80,13 @@ The application includes two primary workspaces:
 - **Policy Analyzer:** submit a policy JSON document and inspect severity-ranked findings, evidence, remediation, and candidate permission chains.
 - **Policy Comparison:** compare a baseline policy with a current policy and review added and removed statements.
 
-The screenshots below can be added to this section when repository-owned image assets are committed. Until then, see the running dashboard locally using the setup instructions below.
+The architecture graphic below is maintained in the repository. Actual browser screenshots are intentionally not represented by generated mockups; they should be added from a real running instance under `docs/images/` when the original image files are available.
 
 ## Architecture
+
+![IAMScope system architecture](docs/architecture.svg)
+
+
 
 ```text
                   AWS IAM policy JSON
@@ -338,7 +342,9 @@ IAMScope/
 │   ├── test_cli.py
 │   └── test_api.py
 ├── docs/
-│   └── rules.md          # Detection rules and limitations
+│   ├── architecture.svg    # System architecture diagram
+│   └── rules.md            # Detection rules and limitations
+├── LICENSE                 # MIT License          # Detection rules and limitations
 ├── .github/
 │   └── workflows/
 │       └── tests.yml     # CI workflow

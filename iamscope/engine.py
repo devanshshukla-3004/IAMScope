@@ -23,7 +23,7 @@ SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
 PRIVILEGE_ACTIONS = {
     "iam:passrole", "iam:putrolepolicy", "iam:attachrolepolicy",
     "iam:createloginprofile", "iam:createaccesskey", "iam:updateassumerolepolicy",
-    "sts:assumerole", "lambda:createfunction", "lambda: updatefunctioncode",
+    "sts:assumerole", "lambda:createfunction", "lambda:updatefunctioncode",
     "cloudformation:createstack", "ec2:runinstances",
 }
 

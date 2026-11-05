@@ -11,3 +11,6 @@
 | IAM009 | Medium | Missing Action and NotAction | Correct the policy document |
 
 These are static heuristics. They do not calculate effective permissions, resolve policy variables, evaluate all condition operators, model service control policies, or prove exploitability. Findings require contextual review.
+
+| IAM007 | High | Allow statement with NotAction | Prefer explicit Action allow-list; tightly scope exceptions |
+| IAM008 | Info | Trust statement contains Condition | Manually validate condition semantics and identity context |

@@ -27,6 +27,7 @@ def test_detects_unrestricted_trust_principal():
 def test_deny_statement_is_not_flagged_as_allow():
     result = analyze_policy({"Statement": [{"Effect": "Deny", "Action": "*", "Resource": "*"}]})
     assert result["finding_count"] == 0
+    assert result["attack_paths"] == []
 
 
 def test_accepts_single_statement_object():
@@ -72,3 +73,36 @@ def test_notes_trust_conditions_without_claiming_they_are_safe():
     result = analyze_policy({"Statement": [{"Effect": "Allow", "Principal": "*", "Action": "sts:AssumeRole", "Condition": {"StringEquals": {"sts:ExternalId": "example"}}}]})
     assert any(item["rule_id"] == "IAM005" for item in result["findings"])
     assert any(item["rule_id"] == "IAM008" for item in result["findings"])
+
+
+def test_correlates_passrole_and_lambda_creation_across_statements():
+    result = analyze_policy({"Statement": [
+        {"Sid": "PassRole", "Effect": "Allow", "Action": "iam:PassRole", "Resource": "arn:aws:iam::123456789012:role/app-*"},
+        {"Sid": "CreateFunction", "Effect": "Allow", "Action": ["lambda:CreateFunction", "lambda:UpdateFunctionCode"], "Resource": "*"},
+    ]})
+    paths = result["attack_paths"]
+    assert len(paths) == 1
+    assert paths[0]["pattern_id"] == "PASSROLE_LAMBDA"
+    finding = next(item for item in result["findings"] if item["rule_id"] == "IAM010")
+    assert finding["severity"] == "high"
+    assert finding["evidence"]["supporting_statements"] == [0, 1]
+
+
+def test_policy_version_path_is_detected_but_not_claimed_exploitable():
+    result = analyze_policy({"Statement": [{"Effect": "Allow", "Action": [
+        "iam:CreatePolicyVersion", "iam:SetDefaultPolicyVersion"
+    ], "Resource": "arn:aws:iam::123456789012:policy/app-policy"}]})
+    assert any(path["pattern_id"] == "IAM_POLICY_VERSION" for path in result["attack_paths"])
+    assert all(path["confidence"] == "candidate" for path in result["attack_paths"])
+
+
+def test_wildcards_are_not_expanded_into_guessed_attack_paths():
+    result = analyze_policy({"Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]})
+    assert result["attack_paths"] == []
+
+
+def test_diff_preserves_duplicate_statement_multiplicity():
+    statement = {"Effect": "Allow", "Action": "s3:GetObject", "Resource": "*"}
+    result = diff_policies({"Statement": [statement]}, {"Statement": [statement, statement]})
+    assert result["added_count"] == 1
+    assert result["removed_count"] == 0

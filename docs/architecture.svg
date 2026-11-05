@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+<title id="title">IAMScope architecture</title>
+<desc id="desc">IAM policy JSON enters through the dashboard, CLI, or REST API, then passes to a shared offline analysis engine that runs detection rules, candidate permission-chain correlation, and policy comparison.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#111c30"/></linearGradient>
+  <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+  <style>
+    .h{font:700 30px Arial,sans-serif;fill:#f8fafc}.sub{font:16px Arial,sans-serif;fill:#a8b8cc}
+    .label{font:700 18px Arial,sans-serif;fill:#f8fafc}.small{font:14px Arial,sans-serif;fill:#cbd5e1}
+    .box{fill:#172438;stroke:#3b536f;stroke-width:2}.core{fill:#102b3b;stroke:#22d3ee;stroke-width:2}
+    .line{stroke:#67e8f9;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  </style>
+</defs>
+<rect width="1200" height="650" rx="24" fill="url(#bg)"/>
+<text x="60" y="65" class="h">IAMScope — System Architecture</text>
+<text x="60" y="96" class="sub">Offline-first AWS IAM policy analysis · shared Python engine · no cloud credentials</text>
+<rect x="420" y="125" width="360" height="75" rx="14" class="box"/>
+<text x="600" y="157" text-anchor="middle" class="label">AWS IAM Policy JSON</text>
+<text x="600" y="181" text-anchor="middle" class="small">Local policy document supplied by operator</text>
+<path d="M600 200 V235 H210 V270 M600 235 V270 M600 235 H990 V270" class="line"/>
+<rect x="70" y="270" width="280" height="86" rx="14" class="box"/>
+<text x="210" y="306" text-anchor="middle" class="label">Web Dashboard</text><text x="210" y="332" text-anchor="middle" class="small">Analyze · Compare</text>
+<rect x="460" y="270" width="280" height="86" rx="14" class="box"/>
+<text x="600" y="306" text-anchor="middle" class="label">Command-Line Interface</text><text x="600" y="332" text-anchor="middle" class="small">Text · JSON output</text>
+<rect x="850" y="270" width="280" height="86" rx="14" class="box"/>
+<text x="990" y="306" text-anchor="middle" class="label">FastAPI REST API</text><text x="990" y="332" text-anchor="middle" class="small">Health · Analyze · Diff</text>
+<path d="M210 356 V395 H600 V420 M600 356 V420 M990 356 V395 H600" class="line"/>
+<rect x="330" y="420" width="540" height="86" rx="16" class="core"/>
+<text x="600" y="456" text-anchor="middle" class="label">Shared IAMScope Analysis Engine</text>
+<text x="600" y="482" text-anchor="middle" class="small">Deterministic local static analysis</text>
+<path d="M600 506 V535 H210 V555 M600 535 V555 M600 535 H990 V555" class="line"/>
+<rect x="60" y="555" width="300" height="65" rx="12" class="box"/>
+<text x="210" y="582" text-anchor="middle" class="label">IAM Rule Checks</text><text x="210" y="604" text-anchor="middle" class="small">IAM001–IAM009</text>
+<rect x="450" y="555" width="300" height="65" rx="12" class="box"/>
+<text x="600" y="582" text-anchor="middle" class="label">Candidate Path Correlation</text><text x="600" y="604" text-anchor="middle" class="small">IAM010 · heuristic signals</text>
+<rect x="840" y="555" width="300" height="65" rx="12" class="box"/>
+<text x="990" y="582" text-anchor="middle" class="label">Policy Comparison</text><text x="990" y="604" text-anchor="middle" class="small">Added / removed statements</text>
+</svg>

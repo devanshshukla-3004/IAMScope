@@ -8,11 +8,12 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from iamscope import __version__
 from iamscope.engine import analyze_policy, diff_policies
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
-app = FastAPI(title="IAMScope API", version="0.2.0", description="Offline IAM policy risk analysis. No AWS credentials or cloud calls.")
+app = FastAPI(title="IAMScope API", version=__version__, description="Offline IAM policy risk analysis. No AWS credentials or cloud calls.")
 app.mount("/assets", StaticFiles(directory=WEB), name="assets")
 
 
@@ -28,7 +29,7 @@ class DiffRequest(BaseModel):
 
 @app.get("/api/health")
 def health() -> dict[str, str]:
-    return {"status": "ok", "service": "IAMScope API", "version": "0.2.0", "mode": "offline-static-analysis"}
+    return {"status": "ok", "service": "IAMScope API", "version": __version__, "mode": "offline-static-analysis"}
 
 
 @app.post("/api/analyze")

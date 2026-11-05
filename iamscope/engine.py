@@ -5,6 +5,8 @@ from dataclasses import asdict, dataclass
 from typing import Any
 import json
 
+from iamscope import __version__
+
 
 @dataclass(frozen=True)
 class Finding:
@@ -247,7 +249,7 @@ def analyze_policy(document: str | dict[str, Any], *, policy_name: str = "policy
               for severity in SEVERITY_ORDER}
     return {
         "tool": "IAMScope",
-        "version": "0.2.0",
+        "version": __version__,
         "policy_name": policy_name,
         "statement_count": len(statements),
         "finding_count": len(findings),

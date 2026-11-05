@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AdminLikeAccess",
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "PassRoleAndDeploy",
+      "Effect": "Allow",
+      "Action": ["iam:PassRole", "lambda:CreateFunction", "lambda:UpdateFunctionCode"],
+      "Resource": "arn:aws:iam::123456789012:role/*"
+    }
+  ]
+}

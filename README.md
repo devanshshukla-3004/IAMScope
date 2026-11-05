@@ -347,18 +347,6 @@ IAMScope/
 └── README.md
 ```
 
-## Roadmap
-
-Potential next engineering milestones:
-
-- More complete effective-permission evaluation across policy types and authorization context.
-- Expanded, versioned AWS action and service coverage.
-- More precise resource and condition compatibility checks for candidate paths.
-- Browser-level end-to-end tests for the dashboard.
-- Optional AWS account integration with a separately designed, least-privilege, read-only security model.
-
-These are future directions, not capabilities claimed by the current release.
-
 ## Contributing
 
 Issues, bug reports, and focused pull requests are welcome. When reporting a detection issue, include a sanitized policy example, expected behavior, actual behavior, and relevant test output. Never publish AWS credentials, account secrets, or sensitive production policy documents.

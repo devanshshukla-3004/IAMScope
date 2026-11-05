@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d13">
+<meta name="description" content="Offline-first cloud identity and IAM permission risk analyzer">
+<title>IAMScope — Identity Risk Workbench</title>
+<link rel="stylesheet" href="/assets/styles.css?v=0.3.0">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">IS</div><div><b>IAMScope</b><small>IDENTITY RISK WORKBENCH</small></div></div>
+    <div class="side-label">WORKSPACE</div>
+    <button class="nav active" data-view="analyze" aria-current="page"><span aria-hidden="true">◈</span> Policy analyzer</button>
+    <button class="nav" data-view="diff"><span aria-hidden="true">⇄</span> Policy comparison</button>
+    <div class="sidebar-bottom"><div class="offline-dot" aria-hidden="true"></div><div><b>Offline analysis</b><small>No cloud credentials used</small></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><span class="eyebrow">CLOUD SECURITY / IAM</span><h1 id="page-title">Policy analyzer</h1></div><div class="top-meta"><span class="status-pill"><i></i> LOCAL ENGINE</span><span class="version">v0.3.0</span></div></header>
+    <section id="analyze-view" class="view">
+      <div class="intro"><div><h2>Inspect identity permissions.</h2><p>Paste an IAM policy document to surface excessive permissions, risky trust relationships and privilege-management paths.</p></div><button id="load-sample" class="button secondary">Load sample policy ↗</button></div>
+      <div class="workspace-grid">
+        <section class="panel editor-panel"><div class="panel-head"><div><span class="step">01 / INPUT</span><h3>Policy document</h3></div><span class="file-tag">JSON</span></div><label class="field-label" for="policy-name">POLICY LABEL</label><input id="policy-name" value="production-role-policy" maxlength="120" autocomplete="off"><label class="field-label" for="policy-input">IAM POLICY JSON</label><textarea id="policy-input" spellcheck="false" aria-label="IAM policy JSON" placeholder='{"Version":"2012-10-17","Statement":[...]}'></textarea><div class="editor-foot"><span id="editor-status" role="status">Ready for analysis</span><button id="analyze-btn" class="button primary">Analyze policy <b>→</b></button></div></section>
+        <section class="panel result-panel"><div class="panel-head"><div><span class="step">02 / FINDINGS</span><h3>Risk assessment</h3></div><span id="result-state" class="muted-tag" aria-live="polite">AWAITING INPUT</span></div><div id="empty-state" class="empty"><div class="empty-icon" aria-hidden="true">⌁</div><h3>No analysis yet</h3><p>Submit a policy document to generate evidence-backed findings and remediation guidance.</p></div><div id="results" hidden aria-live="polite"></div></section>
+      </div>
+      <div class="disclaimer"><b>Analysis boundary</b><span>Findings are static indicators, not proof of exploitability. IAMScope does not evaluate effective permissions across SCPs, permission boundaries, resource policies, or every condition context.</span></div>
+    </section>
+    <section id="diff-view" class="view" hidden>
+      <div class="intro"><div><h2>Track permission drift.</h2><p>Compare two policy snapshots to identify statements added or removed between versions.</p></div></div>
+      <div class="diff-grid"><section class="panel"><div class="panel-head"><div><span class="step">01 / BASELINE</span><h3>Before policy</h3></div><span class="file-tag">JSON</span></div><label class="field-label" for="before-input">BASELINE POLICY JSON</label><textarea id="before-input" spellcheck="false" aria-label="Before policy JSON" placeholder="Paste the baseline policy here"></textarea></section><section class="panel"><div class="panel-head"><div><span class="step">02 / CURRENT</span><h3>After policy</h3></div><span class="file-tag">JSON</span></div><label class="field-label" for="after-input">CURRENT POLICY JSON</label><textarea id="after-input" spellcheck="false" aria-label="After policy JSON" placeholder="Paste the updated policy here"></textarea></section></div>
+      <div class="diff-actions"><button id="diff-sample" class="button secondary">Load comparison sample</button><button id="diff-btn" class="button primary">Compare policies →</button></div><section id="diff-results" class="panel diff-result" hidden aria-live="polite"></section>
+    </section>
+    <footer><span>IAMScope · Static IAM policy analysis</span><span>Built for defensive security workflows</span></footer>
+  </main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/assets/app.js?v=0.3.0"></script>
+</body></html>

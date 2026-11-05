@@ -1,4 +1,4 @@
-# Detection rules (v0.2)
+# Detection rules (v0.3.0)
 
 | Rule | Severity | Detection | Suggested response |
 |---|---|---|---|
@@ -20,6 +20,6 @@
 - `IAM_POLICY_VERSION`: `iam:CreatePolicyVersion` plus `iam:SetDefaultPolicyVersion`.
 - `ROLE_POLICY_MUTATION`: `iam:PutRolePolicy`, optionally correlated with role-policy attachment or trust-policy mutation actions.
 
-The engine correlates exact actions across Allow statements. It deliberately does not expand wildcard or NotAction grants into guessed concrete permissions. A reported path is a **candidate capability combination**, not proof of an exploitable chain. Resource compatibility, trust, conditions, permission boundaries, SCPs, service control policies, and runtime prerequisites are not fully evaluated.
+The engine correlates exact actions across Allow statements. It deliberately does not expand wildcard or NotAction grants into guessed concrete permissions. A reported path is a **candidate capability combination**, not proof of an exploitable chain. The current correlation is syntactic: it does not prove that the matched statements grant compatible resources or conditions. Resource compatibility, trust, conditions, permission boundaries, SCPs, service control policies, and runtime prerequisites are not fully evaluated.
 
 All detections are static heuristics and require contextual review.

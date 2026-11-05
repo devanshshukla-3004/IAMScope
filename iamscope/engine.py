@@ -23,6 +23,8 @@ SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
 PRIVILEGE_ACTIONS = {
     "iam:passrole", "iam:putrolepolicy", "iam:attachrolepolicy",
     "iam:createloginprofile", "iam:createaccesskey", "iam:updateassumerolepolicy",
+    "iam:createpolicyversion", "iam:setdefaultpolicyversion", "iam:attachuserpolicy",
+    "iam:attachgrouppolicy", "iam:putuserpolicy", "iam:putgrouppolicy", "iam:createpolicy",
     "sts:assumerole", "lambda:createfunction", "lambda:updatefunctioncode",
     "cloudformation:createstack", "ec2:runinstances",
 }
@@ -106,6 +108,12 @@ def analyze_policy(document: str | dict[str, Any], *, policy_name: str = "policy
                 "The statement applies to every resource in its resource scope.",
                 evidence, "Scope Resource to explicit ARNs and use conditions where supported.")
 
+        if not_actions:
+            add("IAM007", "high", "Allow with NotAction",
+                "An Allow statement using NotAction can grant a broad set of actions other than the exclusions; its effective scope depends on Resource and conditions.",
+                {**evidence, "excluded_actions": not_actions},
+                "Prefer an explicit Action allow-list. If NotAction is required, tightly scope resources and conditions and review the resulting effective permissions.")
+
         matched_privilege = sorted({action for action in actions
                                     if action in PRIVILEGE_ACTIONS or action.endswith(":*")})
         if matched_privilege:
@@ -139,6 +147,11 @@ def analyze_policy(document: str | dict[str, Any], *, policy_name: str = "policy
                 "The trust statement names one or more AWS accounts. Confirm each is an approved trust boundary.",
                 {**evidence, "account_ids": accounts},
                 "Document and periodically review every trusted account; prefer specific role principals where possible.")
+        if statement.get("Condition"):
+            add("IAM008", "info", "Trust statement has conditions",
+                "Conditions are present and may narrow who can assume or access the resource; IAMScope does not fully evaluate their semantics.",
+                {**evidence, "condition_keys": sorted(statement.get("Condition", {}).keys()) if isinstance(statement.get("Condition"), dict) else []},
+                "Manually validate every condition operator, key, value, and expected identity context.")
 
     findings.sort(key=lambda f: (SEVERITY_ORDER.get(f.severity, 9), f.rule_id, f.evidence.get("statement_index", -1)))
     counts = {severity: sum(f.severity == severity for f in findings)

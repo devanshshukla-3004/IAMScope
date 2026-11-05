@@ -2,38 +2,65 @@
 
 **Cloud Identity & Permission Risk Analyzer**
 
-IAMScope is an offline-first static analyzer for AWS-style IAM policy documents. It identifies risky permission patterns, trust-policy exposure, and policy changes without requiring cloud credentials or making live cloud API calls.
+IAMScope is an offline-first static analyzer for AWS IAM policy documents. It highlights risky permission patterns, trust-policy exposure, and policy drift without cloud credentials or live AWS API calls.
 
-> Static analysis findings are risk indicators, not proof that an identity is exploitable. Validate findings against effective permissions, resource policies, service control policies, boundaries, and the deployment context.
+## Features
 
-## Initial scope
+- Deterministic IAM policy analysis with severity-ranked findings and remediation guidance.
+- Detects full-action and service wildcards, wildcard resources, privilege-management actions, unrestricted trust principals, and explicit account trust.
+- Compares policy snapshots and reports added/removed statements.
+- Local CLI, FastAPI service, and browser dashboard.
+- Sample policies, automated tests, and GitHub Actions CI.
 
-- Parse and validate IAM policy JSON.
-- Detect wildcard actions/resources, administrative access, privilege-escalation-related actions, risky trust principals, and cross-account trust.
-- Emit deterministic findings with severity, evidence, and remediation guidance.
-- Compare two policy documents and report added/removed statements.
-- Run locally with Python; no AWS credentials required.
+> Findings are risk indicators, not proof of exploitability. Effective access depends on identity and resource policies, permission boundaries, service control policies, conditions, and runtime context. IAMScope does not currently evaluate the complete AWS authorization model.
 
-## Development
+## Quick start (Windows PowerShell)
 
-```bash
-python -m venv .venv
-# Windows: .venv\\Scripts\\activate
-# macOS/Linux: source .venv/bin/activate
-pip install -e ".[dev]"
-pytest
+```powershell
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\python.exe -m uvicorn iamscope.api:app --reload
 ```
 
-## CLI (planned in the initial build)
+Open http://127.0.0.1:8000. The dashboard supports policy analysis and before/after comparison. All processing is local to the running service.
 
-```bash
-iamscope analyze examples/policies/overprivileged.json --format json
-iamscope diff examples/policies/baseline.json examples/policies/overprivileged.json
+## CLI
+
+```powershell
+iamscope analyze examples/policies/overprivileged.json --format text
+iamscope analyze examples/policies/trust-policy.json --format json
+iamscope diff examples/policies/baseline.json examples/policies/expanded.json
 ```
 
-## Safety
+## Run tests
 
-IAMScope only reads local JSON policy documents. It does not authenticate to AWS, enumerate accounts, assume roles, change policies, or execute cloud actions.
+```powershell
+py -m pip install -r requirements.txt
+py -m pip install -e .
+py -m pytest
+```
+
+## API
+
+- `GET /api/health` — service health.
+- `POST /api/analyze` — JSON body: `{"policy": { ... }, "policy_name": "example"}`.
+- `POST /api/diff` — JSON body: `{"before": { ... }, "after": { ... }}`.
+- `GET /docs` — interactive OpenAPI documentation.
+
+## Safety and limitations
+
+IAMScope reads only the JSON documents supplied to it. It does not authenticate to AWS, enumerate accounts, assume roles, mutate IAM, or execute cloud actions. This initial ruleset is heuristic: it does not fully resolve wildcards, policy variables, condition logic, SCPs, permission boundaries, session policies, or service-specific authorization behavior. Review every finding in its environment before making access decisions.
+
+## Project structure
+
+```text
+iamscope/       analysis engine, CLI, API
+web/            local browser dashboard
+examples/       safe synthetic policy fixtures
+tests/          engine, CLI and API tests
+docs/           detection rule reference
+```
 
 ## License
 
